@@ -1,2 +1,4 @@
 venv
 lists/*.csv
+twic/*.pgn
+PGNs/*.pgn

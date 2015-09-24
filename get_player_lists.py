@@ -20,10 +20,10 @@ sections = [
     (187424, 'Girls u08'),
 ]
 
-#url = 'http://chess-results.com/tnr%s.aspx?lan=1&art=0&turdet=YES&flag=30&wi=984'
 url = 'http://chess-results.com/tnr%s.aspx?lan=1&art=0&turdet=YES&flag=30&wi=984&zeilen=99999'
 
 for section in sections:
+    print 'Fetching section:', section[1]
     r = requests.get(url % section[0])
     if r.status_code == 200:
         with open('lists/%s.csv' % section[1], 'w') as f:
@@ -31,7 +31,6 @@ for section in sections:
             soup = BeautifulSoup(r.content, 'html.parser')
             table = soup.findAll('table', {'class': 'CRs1'})[0]
             for row in table.findAll('tr')[1:]:
-		#seed, _, title, name, fide_id, country, rating = [td.text for td in row]
 		writer.writerow([td.text for td in row])
 
 

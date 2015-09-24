@@ -6,8 +6,11 @@ import os
 import sys
 import csv
 import requests
+import glob
 
-#JSESSIONID=FBF984C7A72EC3B9E4853CA0298C9BBA
+# chess-db.com limits the number of games you can download if you aren't
+# logged in.  Therefore, you need to register a user and log in, then
+# extract the cookies from your web browser and add them here.
 cookies = {
     'JSESSIONID': 'FBF984C7A72EC3B9E4853CA0298C9BBA',
     '_gat': '1',
@@ -19,10 +22,11 @@ cookies = {
     '_ga': 'GA1.2.1493689967.1442537242',
 }
 
-for filename in os.listdir('lists/'):
+for filename in glob.glob('lists/*.csv'):
     print filename
-    with open('PGNs/%s.pgn' % filename.split('.')[0].replace(' ', '_'), 'w') as outfile:
-        with open(os.path.join('lists', filename)) as infile:
+    section = filename.split('/')[1].split('.')[0].replace(' ', '_')
+    with open('PGNs/%s.pgn' % section, 'w') as outfile:
+        with open(filename) as infile:
             reader = csv.reader(infile)
             for row in reader:
                 r = requests.get(url + row[4], cookies=cookies)
