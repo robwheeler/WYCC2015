@@ -12,14 +12,14 @@ import glob
 # logged in.  Therefore, you need to register a user and log in, then
 # extract the cookies from your web browser and add them here.
 cookies = {
-    'JSESSIONID': 'FBF984C7A72EC3B9E4853CA0298C9BBA',
-    '_gat': '1',
-    '__utmt': '1',
-    '__utma': '250825556.1493689967.1442537242.1442537242.1442537242.1',
-    '__utmb': '250825556.4.10.1442537242',
-    '__utmc': '250825556',
-    '__utmz': '250825556.1442537242.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)',
-    '_ga': 'GA1.2.1493689967.1442537242',
+    #'JSESSIONID': '???',
+    #'_gat': '1',
+    #'__utmt': '1',
+    #'__utma': '???',
+    #'__utmb': '???',
+    #'__utmc': '???',
+    #'__utmz': '???',
+    #'_ga': '???',
 }
 
 for filename in glob.glob('lists/*.csv'):
