@@ -12,9 +12,9 @@ section_set = defaultdict(set)
 
 # Read in all of the players, their FIDE IDs, and their section
 # Create an open file handle for each section
-for filename in glob.glob('lists/*.csv'):
-    section = filename.split('/')[1].split('.')[0].replace(' ', '_')
-    outfile = open('PGNs/TWIC_%s.pgn' % section, 'w')
+for filename in glob.glob(os.path.join('lists', '*.csv')):
+    section = os.path.splitext(os.path.basename(filename))[0]
+    outfile = open(os.path.join('PGNs', 'TWIC_%s.pgn' % section), 'w')
     outfiles.append(outfile)
     with open(filename) as infile:
         reader = csv.reader(infile)
@@ -23,14 +23,15 @@ for filename in glob.glob('lists/*.csv'):
             directory[row[4]] = (section, row[3])
             section_set[section].add(row[4])
 
-# Sort the twic files numerically so that the games appear 
+
+# Sort the twic files numerically so that the games appear
 # in chronological order in the output files
 def twic_key(a):
-    return int(a.split('/')[1].split('.')[0][4:])
+    return int(os.path.splitext(a)[0][len('twic'):])
 
 # Loop over all TWIC games, finding the interesting ones
 # and adding them to the appropriate output file(s)
-for pgn_filename in sorted(glob.glob('twic/*pgn'), key=twic_key):
+for pgn_filename in sorted(glob.glob(os.path.join('twic', '*pgn')), key=twic_key):
     print pgn_filename
     games = pgn.loads(open(pgn_filename).read())
     for game in games:

@@ -1,31 +1,30 @@
 #!/usr/bin/env python
 
-url = 'http://chess-db.com/public/download.jsp?id='
-
 import os
 import sys
 import csv
 import requests
 import glob
 
+url = 'http://chess-db.com/public/download.jsp?id='
+
 # chess-db.com limits the number of games you can download if you aren't
 # logged in.  Therefore, you need to register a user and log in, then
 # extract the cookies from your web browser and add them here.
+
 cookies = {
-    #'JSESSIONID': '???',
-    #'_gat': '1',
-    #'__utmt': '1',
-    #'__utma': '???',
-    #'__utmb': '???',
-    #'__utmc': '???',
-    #'__utmz': '???',
-    #'_ga': '???',
+    # Insert JSESSIONID cookie here
+    # 'JSESSIONID': '???
 }
 
-for filename in glob.glob('lists/*.csv'):
+if 'JSESSIONID' not in cookies:
+    print >> sys.stderr, 'You must set the JSESSIONID cookie before using this script.'
+    sys.exit(-1)
+
+for filename in glob.glob(os.path.join('lists', '*.csv')):
     print filename
-    section = filename.split('/')[1].split('.')[0].replace(' ', '_')
-    with open('PGNs/%s.pgn' % section, 'w') as outfile:
+    section = os.path.splitext(os.path.basename(filename))[0]
+    with open(os.path.join('PGNs', '%s.pgn' % section), 'w') as outfile:
         with open(filename) as infile:
             reader = csv.reader(infile)
             for row in reader:

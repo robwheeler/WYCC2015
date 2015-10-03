@@ -1,22 +1,22 @@
 # -*- coding:utf-8 -*-
 # Copyright (c) 2011 Renato de Pontes Pereira, renato.ppontes at gmail dot com
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy 
-# of this software and associated documentation files (the "Software"), to deal 
-# in the Software without restriction, including without limitation the rights 
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
-# copies of the Software, and to permit persons to whom the Software is 
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all 
+# The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
 #
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
 import re
@@ -25,7 +25,7 @@ import re
 A simple PGN parser.
 
 PGN (Portable Game Notation) is computer-processible format for recording chess
-games, both the moves and related data. 
+games, both the moves and related data.
 
 This module is based on features of others parser modules (such json and yaml).
 The basic usage::
@@ -40,6 +40,7 @@ The basic usage::
 
 '''
 
+
 class PGNGame(object):
     '''
     Describes a single chess game in PGN format.
@@ -50,14 +51,11 @@ class PGNGame(object):
                  'Mode', 'FEN']
 
     OPTIONAL_TAGS = ['WhiteTitle', 'BlackTitle', 'WhiteElo', 'BlackElo', 'ECO',
-                     'Opening', 'Variation', 'WhiteFideId', 'BlackFideId', 'EventDate',]
+                     'Opening', 'Variation', 'WhiteFideId', 'BlackFideId', 'EventDate']
 
     TAG_SET = set(x.lower() for x in TAG_ORDER)
 
-    def __init__(self, event=None, site=None, date=None, round=None, 
-                                                         white=None,
-                                                         black=None,
-                                                         result=None):
+    def __init__(self, event=None, site=None, date=None, round=None, white=None, black=None, result=None):
         '''
         Initializes the PGNGame, receiving the requireds tags.
         '''
@@ -77,12 +75,13 @@ class PGNGame(object):
         self.fen = None
 
         self.moves = []
-    
+
     def dumps(self):
         return dumps(self)
 
     def __repr__(self):
         return '<PGNGame "%s" vs "%s">' % (self.white, self.black)
+
 
 class GameStringIterator(object):
     """
@@ -129,6 +128,7 @@ class GameStringIterator(object):
             self.end = True
             return game_str
 
+
 class GameIterator(object):
     """
         Iterator containing games from a PGN file
@@ -151,10 +151,11 @@ class GameIterator(object):
             game = loads(game_str)[0]
             return game
 
+
 def _pre_process_text(text):
     '''
-    This function is responsible for removal of end line commentarys 
-    (;commentary), blank lines and aditional spaces. Also, it converts 
+    This function is responsible for removal of end line commentarys
+    (;commentary), blank lines and aditional spaces. Also, it converts
     ``\\r\\n`` to ``\\n``.
     '''
     text = re.sub(r'\s*(\\r)?\\n\s*', '\n', text.strip())
@@ -163,28 +164,30 @@ def _pre_process_text(text):
         line = re.sub(r'(\s*;.*|^\s*)', '', line)
         if line:
             lines.append(line)
-    
+
     return lines
+
 
 def _next_token(lines):
     '''
     Get the next token from lines (list of text pgn file lines).
 
     There is 2 kind of tokens: tags and moves. Tags tokens starts with ``[``
-    char, e.g. ``[TagName "Tag Value"]``. Moves tags follows the example: 
+    char, e.g. ``[TagName "Tag Value"]``. Moves tags follows the example:
     ``1. e4 e5 2. d4``.
     '''
     if not lines:
         return None
 
-    token = lines.pop(0).strip() 
+    token = lines.pop(0).strip()
     if token.startswith('['):
         return token
 
     while lines and not lines[0].startswith('['):
-        token += ' '+lines.pop(0).strip()
-    
+        token += ' ' + lines.pop(0).strip()
+
     return token.strip()
+
 
 def _parse_tag(token):
     '''
@@ -192,6 +195,7 @@ def _parse_tag(token):
     '''
     tag, value = re.match(r'\[(\w*)\s*(.+)', token).groups()
     return tag.lower(), value.strip('"[] ')
+
 
 def _parse_moves(token):
     '''
@@ -202,7 +206,7 @@ def _parse_moves(token):
         token = re.sub(r'^\s*(\d+\.+\s*)?', '', token)
 
         if token.startswith('{'):
-            pos = token.find('}')+1
+            pos = token.find('}') + 1
         else:
             pos1 = token.find(' ')
             pos2 = token.find('{')
@@ -219,8 +223,9 @@ def _parse_moves(token):
         else:
             moves.append(token)
             token = ''
-    
+
     return moves
+
 
 def loads(text):
     '''
@@ -245,8 +250,9 @@ def loads(text):
             setattr(game, tag, value)
         else:
             game.moves = _parse_moves(token)
-    
+
     return games
+
 
 def dumps(games):
     '''
@@ -268,18 +274,18 @@ def dumps(games):
         for tag in PGNGame.OPTIONAL_TAGS:
             if getattr(game, tag.lower(), None):
                 dump += '[%s "%s"]\n' % (tag, getattr(game, tag.lower()))
-        
+
         dump += '\n'
         i = 0
         for move in game.moves:
             if not move.startswith('{'):
-                if i%2 == 0:
-                    dump += str(i/2+1)+'. '
-                
+                if i % 2 == 0:
+                    dump += str(i / 2 + 1) + '. '
+
                 i += 1
 
             dump += move + ' '
-            
+
         all_dumps.append(dump.strip())
-            
+
     return '\n\n\n'.join(all_dumps)
