@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+import os
 import glob
 import csv
 import pgn
@@ -27,7 +28,7 @@ for filename in glob.glob(os.path.join('lists', '*.csv')):
 # Sort the twic files numerically so that the games appear
 # in chronological order in the output files
 def twic_key(a):
-    return int(os.path.splitext(a)[0][len('twic'):])
+    return int(os.path.splitext(os.path.basename(a))[0][len('twic'):])
 
 # Loop over all TWIC games, finding the interesting ones
 # and adding them to the appropriate output file(s)
