@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+from __future__ import print_function
 import os
 import glob
 import csv
@@ -15,7 +16,7 @@ section_set = defaultdict(set)
 # Create an open file handle for each section
 for filename in glob.glob(os.path.join('lists', '*.csv')):
     section = os.path.splitext(os.path.basename(filename))[0]
-    outfile = open(os.path.join('PGNs', 'TWIC_%s.pgn' % section), 'w')
+    outfile = open(os.path.join('PGNs', 'TWIC_{}.pgn'.format(section)), 'w')
     outfiles.append(outfile)
     with open(filename) as infile:
         reader = csv.reader(infile)
@@ -33,7 +34,7 @@ def twic_key(a):
 # Loop over all TWIC games, finding the interesting ones
 # and adding them to the appropriate output file(s)
 for pgn_filename in sorted(glob.glob(os.path.join('twic', '*pgn')), key=twic_key):
-    print pgn_filename
+    print(pgn_filename)
     games = pgn.loads(open(pgn_filename).read())
     for game in games:
         white_id = getattr(game, 'whitefideid', None)
@@ -42,12 +43,12 @@ for pgn_filename in sorted(glob.glob(os.path.join('twic', '*pgn')), key=twic_key
         black_file = interesting.get(black_id)
         if white_file:
             found.add(white_id)
-            print 'Found game %s in %s' % (game, pgn_filename)
-            print >> white_file, game.dumps() + '\n\n'
+            print('Found game {} in {}'.format(game, pgn_filename))
+            print(game.dumps() + '\n\n', file=white_file)
         if black_file and black_file != white_file:
             found.add(black_id)
-            print 'Found game %s in %s' % (game, pgn_filename)
-            print >> black_file, game.dumps() + '\n\n'
+            print('Found game {} in {}'.format(game, pgn_filename))
+            print(game.dumps() + '\n\n', file=black_file)
 
 # Come up with some stats on how well "covered" the field is
 missing_set = set(interesting.keys()) - found
@@ -60,11 +61,11 @@ for player in missing_set:
 for section in sorted(missing_list.keys()):
     missing = len(missing_list[section])
     total = len(section_set[section])
-    print '%s: Found %d / %d (%.2f%%)' % (section, total - missing, total, (100. * (total - missing) / total))
+    print('{}: Found {} / {} (:.2f%%)'.format(section, total - missing, total, (100. * (total - missing) / total)))
 
 # List the players that were missed in the TWIC games
 for section in sorted(missing_list.keys()):
-    print 'Missing for:', section
+    print('Missing for:', section)
     for player in missing_list[section]:
-        print player
-    print
+        print(player)
+    print()

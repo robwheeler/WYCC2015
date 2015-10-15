@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import os
 import sys
 import csv
@@ -14,17 +15,17 @@ url = 'http://chess-db.com/public/download.jsp?id='
 
 cookies = {
     # Insert JSESSIONID cookie here
-    # 'JSESSIONID': '???
+    # 'JSESSIONID': '???'
 }
 
 if 'JSESSIONID' not in cookies:
-    print >> sys.stderr, 'You must set the JSESSIONID cookie before using this script.'
+    print('You must set the JSESSIONID cookie before using this script.', file=sys.stderr)
     sys.exit(-1)
 
 for filename in glob.glob(os.path.join('lists', '*.csv')):
-    print filename
+    print(filename)
     section = os.path.splitext(os.path.basename(filename))[0]
-    with open(os.path.join('PGNs', '%s.pgn' % section), 'w') as outfile:
+    with open(os.path.join('PGNs', '{}.pgn'.format(section)), 'w') as outfile:
         with open(filename) as infile:
             reader = csv.reader(infile)
             for row in reader:
@@ -32,6 +33,6 @@ for filename in glob.glob(os.path.join('lists', '*.csv')):
                 if r.status_code == 200:
                     outfile.write(r.content)
                 else:
-                    print 'Could not find games for %s: %s' % (row[3], r.status_code)
+                    print('Could not find games for {}: {}'.format(row[3], r.status_code), file=sys.stderr)
 
 sys.exit(0)

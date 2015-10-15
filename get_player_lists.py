@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import os
 import requests
 import json
@@ -24,10 +25,10 @@ sections = [
 url = 'http://chess-results.com/tnr%s.aspx?lan=1&art=0&turdet=YES&flag=30&wi=984&zeilen=99999'
 
 for section in sections:
-    print 'Fetching section:', section[1]
+    print('Fetching section:', section[1])
     r = requests.get(url % section[0])
     if r.status_code == 200:
-        with open(os.path.join('lists', '%s.csv' % section[1]), 'w') as f:
+        with open(os.path.join('lists', '{}.csv'.format(section[1])), 'w') as f:
             writer = csv.writer(f)
             soup = BeautifulSoup(r.content, 'html.parser')
             table = soup.findAll('table', {'class': 'CRs1'})[0]
